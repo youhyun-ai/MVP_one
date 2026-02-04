@@ -5,191 +5,298 @@ const SUITS = [
   { symbol: "\u2663", name: "c", color: "black" },
 ];
 
-const RANKS = ["A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2"];
+const RANKS = ["A","K","Q","J","T","9","8","7","6","5","4","3","2"];
+const POSITIONS = ["UTG","UTG+1","MP","HJ","CO","BTN","SB","BB"];
 
-const POSITIONS = ["UTG", "UTG+1", "MP", "HJ", "CO", "BTN", "SB", "BB"];
-
-const SCENARIOS = [
-  // --- Premium hands ---
+// =========================================================
+// PREFLOP SCENARIOS (intermediate-level)
+// =========================================================
+const PREFLOP_SCENARIOS = [
+  // --- 3-bet and 4-bet decisions ---
   {
-    hand: "AA", position: "any", action: "Folded to you",
-    correct: "Raise", choices: ["Raise", "Call", "Fold"],
-    explanation: "Pocket aces are the best starting hand in hold'em. You should always raise to build the pot and isolate opponents. Limping risks letting multiple players see a cheap flop and reduces your edge."
+    hand: "AKo", position: "CO", action: "UTG opens 2.5x, HJ 3-bets to 7x",
+    correct: "4-bet", choices: ["4-bet", "Call", "Fold"],
+    explanation: "AKo has too much equity to fold facing a 3-bet when you close the action. 4-betting lets you define your hand's strength and take initiative. Flatting risks playing a bloated pot out of position multiway."
   },
   {
-    hand: "KK", position: "any", action: "Folded to you",
-    correct: "Raise", choices: ["Raise", "Fold", "Call"],
-    explanation: "Pocket kings are the second-best hand preflop. Raising builds the pot and narrows the field. You want to play this hand aggressively in almost every preflop spot."
+    hand: "JJ", position: "BTN", action: "CO opens 2.5x, you 3-bet to 7.5x, CO 4-bets to 18x",
+    correct: "Call", choices: ["Call", "5-bet all-in", "Fold"],
+    explanation: "Jacks are too strong to fold but not strong enough to 5-bet shove at deep stacks. The CO 4-bet range includes bluffs and hands you dominate like TT and AQ. Calling keeps their bluffs in and lets you play postflop with position."
   },
   {
-    hand: "AA", position: "any", action: "Opponent raises to 2.5x",
-    correct: "Re-raise (3-bet)", choices: ["Re-raise (3-bet)", "Call", "Fold"],
-    explanation: "With pocket aces facing a raise, you should 3-bet for value. You have the best possible hand and want to build the pot. Slow-playing aces preflop is a common amateur mistake."
+    hand: "A5s", position: "BTN", action: "CO opens 2.5x",
+    correct: "3-bet", choices: ["3-bet", "Call", "Fold"],
+    explanation: "Suited ace-five is the ideal 3-bet bluff from the button. It blocks AA and A5 nut combos, has nut-flush and wheel-straight potential, and plays poorly as a flat. 3-betting balances your value range with a hand that has good equity when called."
   },
   {
-    hand: "KK", position: "any", action: "Opponent raises to 2.5x",
-    correct: "Re-raise (3-bet)", choices: ["Call", "Fold", "Re-raise (3-bet)"],
-    explanation: "Kings should almost always be 3-bet facing a raise. You have a monster hand that dominates most opening ranges. Building the pot now maximizes your expected value."
+    hand: "QQ", position: "BB", action: "BTN opens 2.5x, SB 3-bets to 9x",
+    correct: "4-bet", choices: ["4-bet", "Call", "5-bet all-in"],
+    explanation: "Queens in the BB facing a squeeze should 4-bet at intermediate stack depths. Just calling lets the original raiser come along cheaply. 4-betting isolates the 3-bettor and gets value from worse hands in their range like AQ, JJ, TT."
   },
   {
-    hand: "QQ", position: "any", action: "Folded to you",
-    correct: "Raise", choices: ["Raise", "Call", "Fold"],
-    explanation: "Queens are a premium pair that should always be opened with a raise. You want to thin the field and play against fewer opponents. This hand plays best heads-up or three-way."
+    hand: "KQs", position: "HJ", action: "UTG opens 2.5x",
+    correct: "Call", choices: ["Call", "3-bet", "Fold"],
+    explanation: "KQs is a strong hand but 3-betting into an UTG range is risky—you'll mostly get action from better. Calling preserves equity against their wider continuing range. You have good playability postflop with two broadway cards and a flush draw possibility."
+  },
+  // --- Squeeze spots ---
+  {
+    hand: "TT", position: "SB", action: "HJ opens 2.5x, CO and BTN both call",
+    correct: "Squeeze (raise to ~12x)", choices: ["Squeeze (raise to ~12x)", "Call", "Fold"],
+    explanation: "Tens in the SB with two cold-callers is a textbook squeeze spot. The callers have capped ranges and will fold most of their hands. Squeezing takes down a large pot preflop or isolates against a range you're ahead of."
   },
   {
-    hand: "AKs", position: "any", action: "Opponent raises to 2.5x",
-    correct: "Re-raise (3-bet)", choices: ["Re-raise (3-bet)", "Call", "Fold"],
-    explanation: "Suited ace-king is a premium hand that plays great as a 3-bet. It has strong equity against opening ranges and excellent playability postflop. 3-betting also lets you take the initiative."
+    hand: "AJo", position: "BB", action: "CO opens 2.5x, BTN calls",
+    correct: "Squeeze (raise to ~9x)", choices: ["Squeeze (raise to ~9x)", "Call", "Fold"],
+    explanation: "AJo in the BB with a caller behind is a solid squeeze. The BTN's cold-call range is capped and folds to aggression often. Squeezing also avoids playing a marginal hand out of position in a multiway pot."
   },
-  // --- Strong hands in position ---
+  // --- Tricky 3-bet pots ---
   {
-    hand: "AQs", position: "CO", action: "Folded to you",
-    correct: "Raise", choices: ["Raise", "Fold", "Call"],
-    explanation: "Suited ace-queen in the cutoff is a clear raise. You have a strong hand with position on most remaining players. Raising lets you take down the blinds or play a pot in position."
-  },
-  {
-    hand: "JJ", position: "MP", action: "Folded to you",
-    correct: "Raise", choices: ["Raise", "Fold", "Call"],
-    explanation: "Pocket jacks are a strong hand that should be opened from any position. While they can be tricky postflop, raising preflop is standard. You want to narrow the field before the flop."
+    hand: "88", position: "MP", action: "UTG opens 2.5x (25 BB effective)",
+    correct: "All-in", choices: ["All-in", "Call", "Fold"],
+    explanation: "At 25 BBs effective, eights are a reshove against a UTG open. You don't have the stack depth to call and set-mine profitably. Shoving applies fold equity against hands like AQ and AJ while flipping with overcards if called."
   },
   {
-    hand: "TT", position: "HJ", action: "Opponent raises to 2.5x from UTG",
-    correct: "Call", choices: ["Call", "Re-raise (3-bet)", "Fold"],
-    explanation: "Tens facing an UTG open are a good calling hand. The UTG range is strong, so 3-betting risks facing only better hands. Calling lets you set-mine and play postflop with a solid pair."
+    hand: "AQo", position: "CO", action: "UTG opens 2.5x (20 BB effective)",
+    correct: "All-in", choices: ["All-in", "Call", "Fold"],
+    explanation: "At 20 BBs, AQo is a standard reshove over a UTG open. The stack-to-pot ratio doesn't support flatting, and folding is far too tight. You have good equity against their calling range and strong fold equity against their opening range."
   },
-  // --- Marginal / speculative hands ---
+  // --- Blind vs blind ---
   {
-    hand: "78s", position: "BTN", action: "Folded to you",
-    correct: "Raise", choices: ["Raise", "Fold", "Call"],
-    explanation: "Suited connectors on the button are a standard open-raise. You have position and a hand with great playability that can make straights and flushes. Folding the button with a suited connector is too tight."
-  },
-  {
-    hand: "A5s", position: "CO", action: "Folded to you",
-    correct: "Raise", choices: ["Raise", "Fold", "Call"],
-    explanation: "Suited ace-five is a solid open from the cutoff. It has nut-flush potential and can make the wheel straight. The suited ace gives you enough equity and playability to open from late position."
+    hand: "K4o", position: "SB", action: "Folded to you (30 BB)",
+    correct: "Raise", choices: ["Raise", "Fold", "All-in"],
+    explanation: "Blind vs blind at 30 BBs, K4o is a standard open from the SB. You only need to get through one player and have a king-high hand. Folding any king here is too tight; shoving is unnecessary with this much stack depth."
   },
   {
-    hand: "KJo", position: "UTG", action: "Folded to you",
-    correct: "Fold", choices: ["Raise", "Fold", "Call"],
-    explanation: "King-jack offsuit from UTG is too weak to open in a tournament. It's easily dominated by AK, AJ, KQ, and you're out of position against most callers. Discipline in early position is key to tournament survival."
+    hand: "J7s", position: "BB", action: "SB raises to 3x (30 BB effective)",
+    correct: "Call", choices: ["Call", "3-bet", "Fold"],
+    explanation: "J7 suited defends profitably against a wide SB opening range. You close the action and get a good price with a hand that has flush and straight potential. 3-betting turns a profitable defend into a marginal bluff."
   },
   {
-    hand: "56s", position: "SB", action: "Folded to you",
-    correct: "Raise", choices: ["Raise", "Fold", "Call"],
-    explanation: "When folded to you in the small blind, suited connectors are a raise to attack the big blind. You should be opening a wide range heads-up against the BB. Completing is usually worse than raising or folding."
+    hand: "T8s", position: "BB", action: "SB raises to 2.5x (40 BB effective)",
+    correct: "3-bet", choices: ["3-bet", "Call", "Fold"],
+    explanation: "T8 suited is a good 3-bet from the BB against a SB open. It has great playability with straight and flush draws, and 3-betting takes the initiative. At 40 BBs you have enough depth to play postflop after a 3-bet."
+  },
+  // --- ICM / bubble pressure ---
+  {
+    hand: "AKs", position: "CO", action: "Folded to you, bubble of a tournament (30 BB)",
+    correct: "Raise", choices: ["Raise", "All-in", "Fold"],
+    explanation: "AKs is far too strong to fold on any bubble. Open-raising keeps your range disguised and gives you postflop options. Shoving 30 BBs is unnecessarily aggressive when a standard raise accomplishes the same pressure with less risk."
   },
   {
-    hand: "Q9o", position: "UTG", action: "Folded to you",
-    correct: "Fold", choices: ["Raise", "Call", "Fold"],
-    explanation: "Queen-nine offsuit from UTG is a clear fold. This hand is too weak and easily dominated from early position. Playing marginal hands out of position leads to difficult spots and tournament bust-outs."
-  },
-  {
-    hand: "ATo", position: "MP", action: "Opponent raises to 2.5x from UTG",
-    correct: "Fold", choices: ["Call", "Fold", "Re-raise (3-bet)"],
-    explanation: "Ace-ten offsuit is dominated by much of an UTG opening range (AK, AQ, AJ). Calling leaves you out of position with a hand that's often second-best. Folding avoids a costly dominated situation."
-  },
-  {
-    hand: "22", position: "BTN", action: "Opponent raises to 2.5x from MP",
-    correct: "Call", choices: ["Call", "Fold", "Re-raise (3-bet)"],
-    explanation: "Small pocket pairs on the button are a good call to set-mine. You have position and implied odds if you hit your set. 3-betting would turn your hand into a bluff with little fold equity."
-  },
-  {
-    hand: "K9s", position: "BTN", action: "Folded to you",
-    correct: "Raise", choices: ["Raise", "Fold", "Call"],
-    explanation: "Suited king-nine on the button is a standard open-raise. You have position, a decent high card, and flush potential. The button is the most profitable position and you should open a wide range."
-  },
-  {
-    hand: "J8o", position: "CO", action: "Opponent raises to 2.5x from HJ",
-    correct: "Fold", choices: ["Call", "Re-raise (3-bet)", "Fold"],
-    explanation: "Jack-eight offsuit has poor playability against a raise. It lacks the connectivity and suit to justify calling, and it's not strong enough to 3-bet. Saving chips with clean folds is critical in tournaments."
-  },
-  // --- Short stack spots ---
-  {
-    hand: "A2s", position: "BTN", action: "Folded to you (15 BB stack)",
+    hand: "55", position: "BTN", action: "Folded to you, 3 from the money (18 BB)",
     correct: "All-in", choices: ["All-in", "Fold", "Raise to 2x"],
-    explanation: "With 15 big blinds, suited aces are a shove from the button. Push/fold strategy takes over at short stacks. A suited ace has enough equity against calling ranges to make this a profitable shove."
+    explanation: "Pocket fives on the button near the bubble at 18 BBs is a clear shove. You apply maximum ICM pressure on the blinds who must call tighter. A min-raise commits too much of your stack and gives opponents a better price to play back."
   },
   {
-    hand: "K7o", position: "SB", action: "Folded to you (12 BB stack)",
-    correct: "All-in", choices: ["All-in", "Fold", "Raise to 2x"],
-    explanation: "At 12 BBs in the small blind, king-seven is a standard shove against the big blind. You don't have the stack depth to raise/fold, so shoving applies maximum pressure. ICM aside, this is a clear push."
+    hand: "K9o", position: "UTG", action: "Folded to you, on the money bubble (22 BB)",
+    correct: "Fold", choices: ["Raise", "Fold", "All-in"],
+    explanation: "K9o from UTG on the bubble is a disciplined fold. Early position opens face many players who can wake up with better holdings. ICM pressure means getting caught here costs more than the pot you'd win by stealing."
   },
+  // --- Mixed / close spots ---
   {
-    hand: "T3o", position: "UTG", action: "Folded to you (10 BB stack)",
-    correct: "Fold", choices: ["All-in", "Fold", "Raise to 2x"],
-    explanation: "Ten-three offsuit from UTG is too weak to shove even at 10 BBs. There are too many players left to act who can wake up with better hands. Wait for a better spot or a better hand."
-  },
-  {
-    hand: "QJs", position: "CO", action: "Opponent raises, another re-raises all-in",
-    correct: "Fold", choices: ["Call", "Fold", "Re-raise all-in"],
-    explanation: "Facing a raise and an all-in re-raise, QJs is in bad shape. The all-in range here is heavily weighted toward big pairs and AK. Your hand has too little equity against that range to call."
-  },
-  {
-    hand: "99", position: "SB", action: "Folded to you (20 BB stack)",
-    correct: "All-in", choices: ["All-in", "Raise to 2x", "Fold"],
-    explanation: "Pocket nines with 20 BBs from the small blind is a strong shove. A standard raise commits too much of your stack, making a shove the cleaner play. Nines have excellent equity against the BB's calling range."
-  },
-  {
-    hand: "AJo", position: "HJ", action: "Folded to you",
+    hand: "ATs", position: "MP", action: "Folded to you",
     correct: "Raise", choices: ["Raise", "Fold", "Call"],
-    explanation: "Ace-jack offsuit from the hijack is a standard open-raise. You have a strong top-card hand in a middle-late position. This is well within a solid opening range from this seat."
+    explanation: "ATs from MP is a standard open in any tournament format. It has strong high-card value, nut-flush potential, and plays well postflop. Folding suited aces from middle position is overly nitty for intermediate play."
   },
   {
-    hand: "87o", position: "UTG+1", action: "Folded to you",
-    correct: "Fold", choices: ["Raise", "Call", "Fold"],
-    explanation: "Eight-seven offsuit from early position is a fold. Without a suit, you lack the implied odds to play speculative hands. Early position requires hands with strong high-card value or premium pairs."
+    hand: "76s", position: "HJ", action: "UTG opens 2.5x",
+    correct: "Fold", choices: ["Call", "3-bet", "Fold"],
+    explanation: "76 suited lacks the implied odds to call an early position raise from the HJ. You're out of position with a speculative hand against a strong range. Calling here bleeds chips in spots where you rarely flop well enough to continue."
+  },
+  {
+    hand: "KJo", position: "CO", action: "HJ opens 2.5x",
+    correct: "Fold", choices: ["Call", "3-bet", "Fold"],
+    explanation: "KJo is dominated by much of the HJ opening range—AK, AJ, KQ all crush you. Calling leads to reverse implied odds when you hit top pair with a bad kicker. This is a clear fold that intermediate players often misplay as a call."
+  },
+  {
+    hand: "QTs", position: "BTN", action: "CO opens 2.5x",
+    correct: "Call", choices: ["Call", "3-bet", "Fold"],
+    explanation: "QTs on the button is a profitable flat against a CO open. You have position, good playability, and straight/flush potential. 3-betting works sometimes but flatting is the higher EV line with this hand's postflop equity."
+  },
+  {
+    hand: "AJo", position: "UTG", action: "Folded to you (6-max table)",
+    correct: "Raise", choices: ["Raise", "Fold", "Call"],
+    explanation: "AJo from UTG at a 6-max table is a standard open. UTG in 6-max is equivalent to HJ in a full ring, so your range should be wider. AJo has enough strength and playability to open from this position."
+  },
+  {
+    hand: "44", position: "CO", action: "UTG raises 2.5x, MP 3-bets to 7x",
+    correct: "Fold", choices: ["Call", "Fold", "4-bet"],
+    explanation: "Small pairs facing a raise and a 3-bet are in terrible shape. You don't have the implied odds to set-mine in a 3-bet pot, and you're crushed by both ranges. Folding saves chips for better spots."
+  },
+  {
+    hand: "T9s", position: "BTN", action: "Folded to you",
+    correct: "Raise", choices: ["Raise", "Fold", "Call"],
+    explanation: "T9 suited on the button is one of the best speculative opens in poker. You have position, two live cards, and excellent straight and flush potential. This is a mandatory open that should never be folded."
+  },
+  {
+    hand: "KK", position: "SB", action: "BTN opens 2.5x (you have 35 BB)",
+    correct: "3-bet", choices: ["3-bet", "All-in", "Call"],
+    explanation: "Kings in the SB facing a BTN open should 3-bet for value, not shove. At 35 BBs, shoving over-commits and folds out everything except hands that beat or flip with you. A 3-bet to ~8x builds the pot while keeping worse hands in."
+  },
+  {
+    hand: "A8o", position: "HJ", action: "UTG opens 2.5x, MP calls",
+    correct: "Fold", choices: ["Call", "Fold", "Squeeze"],
+    explanation: "A8o facing a UTG open and a cold-call is a clear fold. Your hand is dominated by much of UTG's range and you'll be out of position. Squeezing with this hand is too thin—you'll get called by better and fold out worse."
   },
 ];
 
-let correct = 0;
-let total = 0;
+// =========================================================
+// FLOP SCENARIOS (intermediate-level)
+// =========================================================
+const FLOP_SCENARIOS = [
+  {
+    hand: "AKs", board: ["Q","7","2"], boardSuits: ["rainbow"],
+    position: "CO", villain: "BB", pot: "7 BB",
+    action: "You raised preflop, BB called. BB checks to you",
+    correct: "Continuation bet (~3.5 BB)", choices: ["Continuation bet (~3.5 BB)", "Check back", "Bet pot (7 BB)"],
+    explanation: "AK on a dry Q-7-2 board has two overcards and strong equity. A half-pot c-bet takes advantage of your range advantage on this board. Checking gives up the initiative and lets villain realize equity for free with hands like T9 or 65."
+  },
+  {
+    hand: "JJ", board: ["A","8","3"], boardSuits: ["rainbow"],
+    position: "MP", villain: "BB", pot: "6.5 BB",
+    action: "You raised preflop, BB called. BB checks to you",
+    correct: "Check back", choices: ["Continuation bet", "Check back", "Bet pot"],
+    explanation: "Jacks on an ace-high board should often check in position. Your hand has decent showdown value but gets called mostly by better (any ace). Checking controls the pot size and lets you get to showdown cheaply against villain's check-call range."
+  },
+  {
+    hand: "87s", board: ["6","5","K"], boardSuits: ["two-tone"],
+    position: "BTN", villain: "CO", pot: "7 BB",
+    action: "CO raised preflop, you called on BTN. CO c-bets 3.5 BB",
+    correct: "Raise to ~10 BB", choices: ["Raise to ~10 BB", "Call", "Fold"],
+    explanation: "You have an open-ended straight draw on a board where raising puts CO in a tough spot. Raising semi-bluffs with strong equity and can win immediately. Calling is fine but raising builds a bigger pot when you hit and applies maximum pressure."
+  },
+  {
+    hand: "AQo", board: ["Q","T","6"], boardSuits: ["two-tone"],
+    position: "CO", villain: "BB", pot: "7 BB",
+    action: "You raised preflop, BB called. BB donk-bets 5 BB",
+    correct: "Raise to ~14 BB", choices: ["Raise to ~14 BB", "Call", "Fold"],
+    explanation: "Top pair top kicker facing a donk-bet should raise for value and protection. The board is draw-heavy with straight and flush possibilities, so you need to charge draws. Donk-bet ranges are often weak and fold to aggression frequently."
+  },
+  {
+    hand: "TT", board: ["J","T","4"], boardSuits: ["rainbow"],
+    position: "BB", villain: "BTN", pot: "7 BB",
+    action: "BTN raised preflop, you called in BB. You check, BTN bets 3 BB",
+    correct: "Check-raise to ~10 BB", choices: ["Check-raise to ~10 BB", "Call", "Fold"],
+    explanation: "Middle set on a relatively dry board is a strong check-raise candidate. You want to build the pot with a disguised monster. Calling risks letting villain check back the turn and miss value with the second-best hand possible here."
+  },
+  {
+    hand: "AKo", board: ["9","8","7"], boardSuits: ["two-tone"],
+    position: "UTG", villain: "BB", pot: "6.5 BB",
+    action: "You raised preflop, BB called. BB checks to you",
+    correct: "Check back", choices: ["Continuation bet", "Check back", "Bet pot"],
+    explanation: "AK completely whiffs this coordinated board that heavily favors the BB's range. The BB calls with suited connectors, pocket pairs, and suited one-gappers that all connect here. Checking preserves your equity and avoids a check-raise on a board where you have no pair."
+  },
+  {
+    hand: "KQs", board: ["K","9","4"], boardSuits: ["rainbow"],
+    position: "BTN", villain: "BB", pot: "7 BB",
+    action: "You raised preflop, BB called. BB checks to you",
+    correct: "Bet ~3 BB", choices: ["Bet ~3 BB", "Check back", "Bet pot (7 BB)"],
+    explanation: "Top pair with a queen kicker on a dry board wants a small value bet. A third-pot sizing extracts value from worse pairs and ace-highs. Betting big folds out everything you beat and only gets called by hands that beat you."
+  },
+  {
+    hand: "66", board: ["A","K","6"], boardSuits: ["two-tone"],
+    position: "BB", villain: "CO", pot: "7 BB",
+    action: "CO raised preflop, you called in BB. You check, CO bets 3.5 BB",
+    correct: "Call", choices: ["Call", "Check-raise", "Fold"],
+    explanation: "Bottom set on AK6 is a monster, but check-raising scares away everything you beat. Calling traps villain into barreling turns with worse hands and bluffs. The board favors their range, so they'll keep betting with many second-best hands."
+  },
+  {
+    hand: "98s", board: ["T","7","2"], boardSuits: ["rainbow"],
+    position: "CO", villain: "BB", pot: "7 BB",
+    action: "You raised preflop, BB called. BB check-raises your 3 BB c-bet to 10 BB",
+    correct: "Call", choices: ["Call", "Fold", "Re-raise"],
+    explanation: "Open-ended straight draw with a gutshot (any 6 or J) facing a check-raise has excellent equity. You have the odds to call and strong implied odds when you hit. Folding gives up too much equity and re-raising bloats the pot with a drawing hand."
+  },
+  {
+    hand: "AA", board: ["J","T","9"], boardSuits: ["two-tone"],
+    position: "CO", villain: "BTN", pot: "16 BB (3-bet pot)",
+    action: "You 3-bet preflop, BTN called. You bet 8 BB, BTN raises to 22 BB",
+    correct: "Call", choices: ["Call", "Re-raise all-in", "Fold"],
+    explanation: "Aces on a coordinated JT9 board facing a raise should call rather than re-raise. The board connects heavily with BTN's flatting range (QJ, JT, 87, sets). Calling keeps bluffs in and lets you re-evaluate on the turn rather than committing your stack on a dangerous board."
+  },
+  {
+    hand: "AJs", board: ["A","8","5"], boardSuits: ["two-tone, you have backdoor flush draw"],
+    position: "BTN", villain: "BB", pot: "7 BB",
+    action: "You raised preflop, BB called. BB donk-bets 2 BB",
+    correct: "Raise to ~7 BB", choices: ["Raise to ~7 BB", "Call", "Fold"],
+    explanation: "Top pair strong kicker facing a small donk-bet should raise for value and protection. The donk sizing is weak and often indicates a draw or marginal pair testing the water. Raising charges draws and defines your hand as strong."
+  },
+  {
+    hand: "KTs", board: ["K","7","3"], boardSuits: ["monotone, you have the flush draw"],
+    position: "CO", villain: "BB", pot: "7 BB",
+    action: "You raised preflop, BB called. BB checks to you",
+    correct: "Bet ~5 BB", choices: ["Bet ~5 BB", "Check back", "Bet pot (7 BB)"],
+    explanation: "Top pair with the nut flush draw is a premium combo that should bet for value and protection. On a monotone board, opponents with a single high card of that suit will call. Larger sizing charges the one-card flush draws that have roughly 35% equity against you."
+  },
+  {
+    hand: "QJo", board: ["T","9","3"], boardSuits: ["rainbow"],
+    position: "BB", villain: "CO", pot: "6.5 BB",
+    action: "CO raised preflop, you called in BB. You check, CO bets 3 BB",
+    correct: "Call", choices: ["Call", "Check-raise", "Fold"],
+    explanation: "Open-ended straight draw on a dry board is a clear call against a c-bet. You have eight outs to the nuts and position doesn't matter since you close the action. Check-raising is aggressive but turns a strong drawing hand into a bluff unnecessarily."
+  },
+  {
+    hand: "55", board: ["A","Q","J"], boardSuits: ["two-tone"],
+    position: "BTN", villain: "BB", pot: "7 BB",
+    action: "You raised preflop, BB called. BB check-raises your 3 BB bet to 10 BB",
+    correct: "Fold", choices: ["Call", "Fold", "Re-raise"],
+    explanation: "Pocket fives on AQJ facing a check-raise have almost zero equity. The board connects with nearly everything in the BB's check-raise range—two pair, sets, straights, and strong draws. Your hand has no realistic path to winning this pot."
+  },
+  {
+    hand: "ATo", board: ["A","9","5"], boardSuits: ["rainbow"],
+    position: "MP", villain: "BB", pot: "6.5 BB",
+    action: "You raised preflop, BB called. BB leads for 5 BB",
+    correct: "Call", choices: ["Call", "Raise to ~14 BB", "Fold"],
+    explanation: "Top pair decent kicker facing a lead should call to keep villain's range wide. Raising folds out bluffs and worse aces that might fire again. The dry board means you're rarely behind to draws, so there's no urgency to protect."
+  },
+  {
+    hand: "KK", board: ["A","7","2"], boardSuits: ["rainbow"],
+    position: "CO", villain: "BB", pot: "7 BB",
+    action: "You raised preflop, BB called. BB checks to you",
+    correct: "Bet ~2.5 BB", choices: ["Bet ~2.5 BB", "Check back", "Bet pot (7 BB)"],
+    explanation: "Kings on an ace-high dry board should still c-bet small. Many hands in BB's range missed this board entirely, and a small bet extracts value from medium pairs and gets folds from overcards. Checking back lets villain realize free equity with hands you currently beat."
+  },
+  {
+    hand: "97s", board: ["8","6","2"], boardSuits: ["two-tone, you have flush draw"],
+    position: "BTN", villain: "CO", pot: "7 BB",
+    action: "CO raised preflop, you called. CO bets 3.5 BB",
+    correct: "Raise to ~10 BB", choices: ["Raise to ~10 BB", "Call", "Fold"],
+    explanation: "You have an open-ended straight draw plus a flush draw—a monster combo draw with 15 outs. Semi-bluff raising applies pressure and can take the pot immediately. You have roughly 55% equity even if called, making this a value raise in disguise."
+  },
+  {
+    hand: "QQ", board: ["K","8","4"], boardSuits: ["rainbow"],
+    position: "CO", villain: "BB", pot: "7 BB",
+    action: "You raised preflop, BB called. BB check-raises your 3 BB c-bet to 10 BB",
+    correct: "Call", choices: ["Call", "Re-raise", "Fold"],
+    explanation: "Queens facing a check-raise on a king-high board are in a tough but playable spot. You beat bluffs, draws, and slowplayed middle pairs in villain's range. Folding is too tight and re-raising only gets called by better—calling and re-evaluating the turn is best."
+  },
+  {
+    hand: "A4s", board: ["K","J","5"], boardSuits: ["two-tone, you have backdoor flush draw"],
+    position: "BTN", villain: "BB", pot: "7 BB",
+    action: "You raised preflop, BB called. BB checks to you",
+    correct: "Bet ~2.5 BB", choices: ["Bet ~2.5 BB", "Check back", "Bet pot"],
+    explanation: "A4 suited with a backdoor flush draw on KJ5 is a good small c-bet candidate. You have overcards, a backdoor nut flush draw, and a gutshot to the wheel. Small sizing puts pressure on BB's weak pairs and unpaired hands while keeping the pot manageable."
+  },
+  {
+    hand: "JTs", board: ["9","8","2"], boardSuits: ["rainbow"],
+    position: "CO", villain: "BB", pot: "7 BB",
+    action: "You raised preflop, BB called. BB check-raises your 3 BB c-bet to 10 BB",
+    correct: "Call", choices: ["Call", "Re-raise all-in", "Fold"],
+    explanation: "Open-ended straight draw facing a check-raise has excellent pot odds and implied odds. Any 7 or Q gives you the nuts, and you have two overcards as potential outs. Re-raising commits too many chips with a draw, but folding throws away strong equity."
+  },
+];
+
+// =========================================================
+// Engine
+// =========================================================
+let currentMode = null;
+let scenarios = [];
+let correctCount = 0;
+let totalCount = 0;
 let usedIndices = [];
 
-function pickRandom(arr) {
-  return arr[Math.floor(Math.random() * arr.length)];
-}
-
-function randomSuit() {
-  return SUITS[Math.floor(Math.random() * SUITS.length)];
-}
-
-function parseHand(handStr) {
-  const suited = handStr.endsWith("s");
-  const offsuit = handStr.endsWith("o");
-  const isPair = !suited && !offsuit && handStr.length === 2;
-
-  let r1, r2;
-  if (isPair) {
-    r1 = handStr[0];
-    r2 = handStr[1];
-  } else {
-    r1 = handStr[0];
-    r2 = handStr[1];
-  }
-
-  let s1 = randomSuit();
-  let s2;
-  if (suited) {
-    s2 = s1;
-  } else {
-    do { s2 = randomSuit(); } while (s2.name === s1.name);
-  }
-  if (isPair) {
-    do { s2 = randomSuit(); } while (s2.name === s1.name);
-  }
-
-  return [
-    { rank: r1, suit: s1 },
-    { rank: r2, suit: s2 },
-  ];
-}
-
-function renderCard(card) {
-  const div = document.createElement("div");
-  div.className = "card " + card.suit.color;
-  div.innerHTML = `<span class="rank">${card.rank}</span><span class="suit">${card.suit.symbol}</span>`;
-  return div;
-}
+function pickRandom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+function randomSuit() { return SUITS[Math.floor(Math.random() * SUITS.length)]; }
 
 function shuffle(arr) {
   for (let i = arr.length - 1; i > 0; i--) {
@@ -199,42 +306,124 @@ function shuffle(arr) {
   return arr;
 }
 
-function loadQuestion() {
-  if (usedIndices.length >= SCENARIOS.length) {
-    usedIndices = [];
+function parseHand(handStr) {
+  const suited = handStr.endsWith("s");
+  const offsuit = handStr.endsWith("o");
+  const r1 = handStr[0];
+  const r2 = handStr[1];
+
+  let s1 = randomSuit();
+  let s2;
+  if (suited) {
+    s2 = s1;
+  } else {
+    do { s2 = randomSuit(); } while (s2.name === s1.name);
   }
+  return [
+    { rank: r1, suit: s1 },
+    { rank: r2, suit: s2 },
+  ];
+}
+
+function generateBoardCards(boardRanks, boardSuitsHint) {
+  let suits;
+  if (boardSuitsHint[0] === "rainbow") {
+    suits = shuffle([...SUITS]).slice(0, 3);
+  } else if (boardSuitsHint[0].startsWith("monotone")) {
+    const s = randomSuit();
+    suits = [s, s, s];
+  } else {
+    const s1 = randomSuit();
+    let s2;
+    do { s2 = randomSuit(); } while (s2.name === s1.name);
+    suits = shuffle([s1, s1, s2]);
+  }
+  return boardRanks.map((r, i) => ({ rank: r, suit: suits[i] }));
+}
+
+function renderCard(card) {
+  const div = document.createElement("div");
+  div.className = "card " + card.suit.color;
+  div.innerHTML = `<span class="rank">${card.rank}</span><span class="suit">${card.suit.symbol}</span>`;
+  return div;
+}
+
+// --- Navigation ---
+function startQuiz(mode) {
+  currentMode = mode;
+  scenarios = mode === "preflop" ? PREFLOP_SCENARIOS : FLOP_SCENARIOS;
+  correctCount = 0;
+  totalCount = 0;
+  usedIndices = [];
+
+  document.getElementById("modeSelect").classList.add("hidden");
+  document.getElementById("quizScreen").classList.remove("hidden");
+  document.getElementById("quizTitle").textContent = mode === "preflop" ? "Preflop Quiz" : "Flop Quiz";
+  document.getElementById("score").textContent = "Score: 0 / 0";
+  loadQuestion();
+}
+
+function goBack() {
+  document.getElementById("quizScreen").classList.add("hidden");
+  document.getElementById("modeSelect").classList.remove("hidden");
+}
+
+// --- Load question ---
+function loadQuestion() {
+  if (usedIndices.length >= scenarios.length) usedIndices = [];
 
   let idx;
-  do {
-    idx = Math.floor(Math.random() * SCENARIOS.length);
-  } while (usedIndices.includes(idx));
+  do { idx = Math.floor(Math.random() * scenarios.length); } while (usedIndices.includes(idx));
   usedIndices.push(idx);
 
-  const scenario = SCENARIOS[idx];
-  const cards = parseHand(scenario.hand);
+  const s = scenarios[idx];
+  const cards = parseHand(s.hand);
 
+  // Render hole cards
   const cardsEl = document.getElementById("cards");
   cardsEl.innerHTML = "";
-  cards.forEach((c) => cardsEl.appendChild(renderCard(c)));
+  cards.forEach(c => cardsEl.appendChild(renderCard(c)));
 
-  const pos = scenario.position === "any" ? pickRandom(POSITIONS) : scenario.position;
+  // Board (flop mode only)
+  const boardSection = document.getElementById("boardSection");
+  const boardEl = document.getElementById("board");
+  const potBox = document.getElementById("potBox");
+
+  if (currentMode === "flop") {
+    boardSection.classList.remove("hidden");
+    boardEl.innerHTML = "";
+    const boardCards = generateBoardCards(s.board, s.boardSuits);
+    boardCards.forEach(c => boardEl.appendChild(renderCard(c)));
+    potBox.classList.remove("hidden");
+    document.getElementById("pot").textContent = s.pot;
+  } else {
+    boardSection.classList.add("hidden");
+    potBox.classList.add("hidden");
+  }
+
+  // Position & stack
+  const pos = s.position === "any" ? pickRandom(POSITIONS) : s.position;
   document.getElementById("position").textContent = pos;
 
-  const stackText = scenario.action.includes("BB stack")
-    ? scenario.action.match(/\d+ BB/)[0]
-    : Math.floor(Math.random() * 30 + 20) + " BB";
+  const stackMatch = s.action.match(/(\d+ BB)/);
+  const stackText = stackMatch ? stackMatch[1] : (Math.floor(Math.random() * 30 + 20) + " BB");
   document.getElementById("stack").textContent = stackText;
-  document.getElementById("action").textContent = scenario.action.replace(/\s*\(\d+ BB stack\)/, "");
 
+  // Action
+  document.getElementById("actionLabel").textContent = currentMode === "flop" ? "Situation" : "Action To You";
+  document.getElementById("action").textContent = s.action.replace(/\s*\(\d+ BB[^)]*\)/, "");
+
+  // Question
+  document.getElementById("question").textContent = "What should you do?";
+
+  // Choices
   const choicesEl = document.getElementById("choices");
   choicesEl.innerHTML = "";
-  const shuffled = shuffle([...scenario.choices]);
-
-  shuffled.forEach((choice) => {
+  shuffle([...s.choices]).forEach(choice => {
     const btn = document.createElement("button");
     btn.className = "choice-btn";
     btn.textContent = choice;
-    btn.onclick = () => handleAnswer(choice, scenario.correct, scenario.explanation);
+    btn.onclick = () => handleAnswer(choice, s.correct, s.explanation);
     choicesEl.appendChild(btn);
   });
 
@@ -243,29 +432,17 @@ function loadQuestion() {
 }
 
 function handleAnswer(selected, correctAnswer, explanation) {
-  total++;
+  totalCount++;
   const buttons = document.querySelectorAll(".choice-btn");
-
-  buttons.forEach((btn) => {
+  buttons.forEach(btn => {
     btn.disabled = true;
-    if (btn.textContent === correctAnswer) {
-      btn.classList.add("correct");
-    } else if (btn.textContent === selected && selected !== correctAnswer) {
-      btn.classList.add("wrong");
-    }
+    if (btn.textContent === correctAnswer) btn.classList.add("correct");
+    else if (btn.textContent === selected && selected !== correctAnswer) btn.classList.add("wrong");
   });
-
-  if (selected === correctAnswer) {
-    correct++;
-  }
-
-  document.getElementById("score").textContent = `Score: ${correct} / ${total}`;
-
+  if (selected === correctAnswer) correctCount++;
+  document.getElementById("score").textContent = `Score: ${correctCount} / ${totalCount}`;
   const expEl = document.getElementById("explanation");
   expEl.textContent = explanation;
   expEl.classList.add("show");
-
   document.getElementById("nextBtn").classList.add("show");
 }
-
-loadQuestion();

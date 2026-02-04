@@ -3,39 +3,75 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Preflop Quiz - Tournament NLH</title>
+  <title>Tournament NLH Quiz</title>
   <link href="/style.css" rel="stylesheet">
 </head>
 <body>
-  <h1>Preflop Quiz</h1>
-  <div class="quiz-container">
-    <div class="score" id="score">Score: 0 / 0</div>
 
-    <div class="cards" id="cards"></div>
+  <!-- Mode selection screen -->
+  <div id="modeSelect" class="mode-select">
+    <h1>Tournament NLH Quiz</h1>
+    <p class="mode-subtitle">Choose what to practice</p>
+    <div class="mode-buttons">
+      <button class="mode-btn" onclick="startQuiz('preflop')">
+        <span class="mode-icon">P</span>
+        <span class="mode-title">Preflop</span>
+        <span class="mode-desc">Opening ranges, 3-bet spots, ICM shoves, squeeze plays & mixed strategies</span>
+      </button>
+      <button class="mode-btn" onclick="startQuiz('flop')">
+        <span class="mode-icon">F</span>
+        <span class="mode-title">Flop</span>
+        <span class="mode-desc">C-bets, check-raises, draws, board texture reads & multi-street planning</span>
+      </button>
+    </div>
+  </div>
 
-    <div class="info-row">
-      <div class="info-box">
-        <div class="scenario-label">Your Position</div>
-        <div class="scenario-value" id="position">--</div>
-      </div>
-      <div class="info-box">
-        <div class="scenario-label">Stack</div>
-        <div class="scenario-value" id="stack">--</div>
-      </div>
+  <!-- Quiz screen -->
+  <div id="quizScreen" class="quiz-screen hidden">
+    <div class="top-bar">
+      <button class="back-btn" onclick="goBack()">&larr; Back</button>
+      <h1 id="quizTitle">Preflop Quiz</h1>
     </div>
 
-    <div class="scenario">
-      <div class="scenario-label">Action To You</div>
-      <div class="scenario-value" id="action">--</div>
+    <div class="quiz-container">
+      <div class="score" id="score">Score: 0 / 0</div>
+
+      <div id="boardSection" class="board-section hidden">
+        <div class="scenario-label">Board</div>
+        <div class="cards board-cards" id="board"></div>
+      </div>
+
+      <div class="scenario-label" style="text-align:center; margin-bottom:4px;">Your Hand</div>
+      <div class="cards" id="cards"></div>
+
+      <div class="info-row">
+        <div class="info-box">
+          <div class="scenario-label">Your Position</div>
+          <div class="scenario-value" id="position">--</div>
+        </div>
+        <div class="info-box">
+          <div class="scenario-label">Stack</div>
+          <div class="scenario-value" id="stack">--</div>
+        </div>
+        <div class="info-box" id="potBox" class="hidden">
+          <div class="scenario-label">Pot</div>
+          <div class="scenario-value" id="pot">--</div>
+        </div>
+      </div>
+
+      <div class="scenario">
+        <div class="scenario-label" id="actionLabel">Action To You</div>
+        <div class="scenario-value" id="action">--</div>
+      </div>
+
+      <div class="question" id="question">What should you do?</div>
+
+      <div class="choices" id="choices"></div>
+
+      <div class="explanation" id="explanation"></div>
+
+      <button class="next-btn" id="nextBtn" onclick="loadQuestion()">Next Hand</button>
     </div>
-
-    <div class="question">What should you do?</div>
-
-    <div class="choices" id="choices"></div>
-
-    <div class="explanation" id="explanation"></div>
-
-    <button class="next-btn" id="nextBtn" onclick="loadQuestion()">Next Hand</button>
   </div>
 
   <script defer type="text/javascript" src="/main.js"></script>

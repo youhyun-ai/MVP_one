@@ -18,10 +18,107 @@ body {
 
 h1 {
   font-size: 1.6rem;
-  margin-bottom: 24px;
   color: #e94560;
   text-transform: uppercase;
   letter-spacing: 2px;
+}
+
+.hidden { display: none !important; }
+
+/* --- Mode select --- */
+.mode-select {
+  text-align: center;
+  max-width: 520px;
+  width: 100%;
+}
+
+.mode-subtitle {
+  color: #a0a0b0;
+  margin: 8px 0 28px;
+  font-size: 1rem;
+}
+
+.mode-buttons {
+  display: flex;
+  gap: 16px;
+}
+
+.mode-btn {
+  flex: 1;
+  background: #16213e;
+  border: 2px solid #0f3460;
+  border-radius: 16px;
+  padding: 28px 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  color: #eee;
+}
+
+.mode-btn:hover {
+  border-color: #e94560;
+  background: #1a2a4e;
+}
+
+.mode-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #e94560;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.mode-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.mode-desc {
+  font-size: 0.8rem;
+  color: #a0a0b0;
+  line-height: 1.4;
+}
+
+/* --- Top bar --- */
+.top-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+  width: 100%;
+  max-width: 480px;
+}
+
+.back-btn {
+  background: none;
+  border: 1px solid #a0a0b0;
+  color: #a0a0b0;
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+}
+
+.back-btn:hover {
+  color: #e94560;
+  border-color: #e94560;
+}
+
+/* --- Quiz screen --- */
+.quiz-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 }
 
 .quiz-container {
@@ -37,7 +134,7 @@ h1 {
   background: #0f3460;
   border-radius: 12px;
   padding: 16px;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
   text-align: center;
 }
 
@@ -50,7 +147,7 @@ h1 {
 }
 
 .scenario-value {
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 600;
 }
 
@@ -58,8 +155,28 @@ h1 {
   display: flex;
   justify-content: center;
   gap: 12px;
-  margin: 20px 0;
+  margin: 8px 0 16px;
 }
+
+.board-section {
+  text-align: center;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #0f3460;
+}
+
+.board-cards {
+  gap: 8px;
+}
+
+.board-cards .card {
+  width: 56px;
+  height: 78px;
+  font-size: 1.2rem;
+}
+
+.board-cards .card .rank { font-size: 1.1rem; }
+.board-cards .card .suit { font-size: 1.3rem; }
 
 .card {
   width: 72px;
@@ -75,28 +192,16 @@ h1 {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-.card.red {
-  color: #d32f2f;
-}
+.card.red { color: #d32f2f; }
+.card.black { color: #222; }
 
-.card.black {
-  color: #222;
-}
-
-.card .rank {
-  font-size: 1.4rem;
-  line-height: 1;
-}
-
-.card .suit {
-  font-size: 1.6rem;
-  line-height: 1;
-}
+.card .rank { font-size: 1.4rem; line-height: 1; }
+.card .suit { font-size: 1.6rem; line-height: 1; }
 
 .info-row {
   display: flex;
   justify-content: space-between;
-  gap: 12px;
+  gap: 10px;
   margin-bottom: 16px;
 }
 
@@ -166,9 +271,7 @@ h1 {
   display: none;
 }
 
-.explanation.show {
-  display: block;
-}
+.explanation.show { display: block; }
 
 .next-btn {
   display: none;
@@ -185,17 +288,17 @@ h1 {
   transition: background 0.2s;
 }
 
-.next-btn:hover {
-  background: #c73650;
-}
-
-.next-btn.show {
-  display: block;
-}
+.next-btn:hover { background: #c73650; }
+.next-btn.show { display: block; }
 
 .score {
   text-align: center;
   margin-bottom: 16px;
   font-size: 0.9rem;
   color: #a0a0b0;
+}
+
+@media (max-width: 500px) {
+  .mode-buttons { flex-direction: column; }
+  .quiz-container { padding: 20px; }
 }
