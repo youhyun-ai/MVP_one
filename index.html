@@ -3,12 +3,41 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hello World</title>
-  <link href='/style.css' rel='stylesheet'>
+  <title>Preflop Quiz - Tournament NLH</title>
+  <link href="/style.css" rel="stylesheet">
 </head>
 <body>
-  <h1>Hello, world!</h1>
-  <button onclick="console.log('hello');">Press me</button>
+  <h1>Preflop Quiz</h1>
+  <div class="quiz-container">
+    <div class="score" id="score">Score: 0 / 0</div>
+
+    <div class="cards" id="cards"></div>
+
+    <div class="info-row">
+      <div class="info-box">
+        <div class="scenario-label">Your Position</div>
+        <div class="scenario-value" id="position">--</div>
+      </div>
+      <div class="info-box">
+        <div class="scenario-label">Stack</div>
+        <div class="scenario-value" id="stack">--</div>
+      </div>
+    </div>
+
+    <div class="scenario">
+      <div class="scenario-label">Action To You</div>
+      <div class="scenario-value" id="action">--</div>
+    </div>
+
+    <div class="question">What should you do?</div>
+
+    <div class="choices" id="choices"></div>
+
+    <div class="explanation" id="explanation"></div>
+
+    <button class="next-btn" id="nextBtn" onclick="loadQuestion()">Next Hand</button>
+  </div>
+
   <script defer type="text/javascript" src="/main.js"></script>
 </body>
 </html>
