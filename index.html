@@ -84,6 +84,33 @@
     .choice-btn:active {
       transform: translateY(0);
     }
+    .choice-btn.answered {
+      cursor: default;
+      position: relative;
+      overflow: hidden;
+    }
+    .choice-btn.answered:hover {
+      transform: none;
+    }
+    .choice-btn .percent-bar {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      background: rgba(255,255,255,0.2);
+      transition: width 0.3s ease;
+      z-index: 0;
+    }
+    .choice-btn .label {
+      position: relative;
+      z-index: 1;
+    }
+    .choice-btn .percent {
+      position: relative;
+      z-index: 1;
+      margin-left: 10px;
+      opacity: 0.9;
+    }
   </style>
 </head>
 <body>
@@ -109,11 +136,46 @@
       <strong>What is the optimal action?</strong>
     </div>
 
-    <div class="choices">
-      <button class="choice-btn">Bet 25%</button>
-      <button class="choice-btn">Check</button>
-      <button class="choice-btn">All-in</button>
+    <div class="choices" id="choices">
+      <button class="choice-btn" data-choice="bet25">Bet 25%</button>
+      <button class="choice-btn" data-choice="check">Check</button>
+      <button class="choice-btn" data-choice="allin">All-in</button>
     </div>
   </div>
+
+  <script>
+    const votes = { bet25: 0, check: 0, allin: 0 };
+    let hasVoted = false;
+
+    function updateDisplay() {
+      const total = votes.bet25 + votes.check + votes.allin;
+      document.querySelectorAll('.choice-btn').forEach(btn => {
+        const choice = btn.dataset.choice;
+        const count = votes[choice];
+        const percent = total > 0 ? Math.round((count / total) * 100) : 0;
+
+        btn.classList.add('answered');
+        btn.innerHTML = `
+          <span class="percent-bar" style="width: ${percent}%"></span>
+          <span class="label">${getLabel(choice)}</span>
+          <span class="percent">${percent}%</span>
+        `;
+      });
+    }
+
+    function getLabel(choice) {
+      return { bet25: 'Bet 25%', check: 'Check', allin: 'All-in' }[choice];
+    }
+
+    document.getElementById('choices').addEventListener('click', (e) => {
+      const btn = e.target.closest('.choice-btn');
+      if (!btn || hasVoted) return;
+
+      hasVoted = true;
+      const choice = btn.dataset.choice;
+      votes[choice]++;
+      updateDisplay();
+    });
+  </script>
 </body>
 </html>
