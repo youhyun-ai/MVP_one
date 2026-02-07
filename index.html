@@ -4,76 +4,116 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tournament NLH Quiz</title>
-  <link href="/style.css" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #1a1a2e;
+      color: #eee;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .quiz-container {
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+    }
+    .flop {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 30px;
+    }
+    .card {
+      width: 70px;
+      height: 100px;
+      background: #fff;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: bold;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    .card .rank {
+      font-size: 32px;
+    }
+    .card .suit {
+      font-size: 28px;
+    }
+    .heart { color: #e74c3c; }
+    .spade { color: #2c3e50; }
+    .question {
+      font-size: 18px;
+      line-height: 1.6;
+      margin-bottom: 30px;
+      padding: 20px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+    }
+    .choices {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .choice-btn {
+      padding: 16px 24px;
+      font-size: 18px;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #3498db;
+      color: #fff;
+      transition: background 0.2s, transform 0.1s;
+    }
+    .choice-btn:hover {
+      background: #2980b9;
+      transform: translateY(-2px);
+    }
+    .choice-btn:active {
+      transform: translateY(0);
+    }
+  </style>
 </head>
 <body>
+  <div class="quiz-container">
+    <div class="flop">
+      <div class="card">
+        <span class="rank heart">Q</span>
+        <span class="suit heart">&hearts;</span>
+      </div>
+      <div class="card">
+        <span class="rank spade">T</span>
+        <span class="suit spade">&spades;</span>
+      </div>
+      <div class="card">
+        <span class="rank heart">8</span>
+        <span class="suit heart">&hearts;</span>
+      </div>
+    </div>
 
-  <!-- Mode selection screen -->
-  <div id="modeSelect" class="mode-select">
-    <h1>Tournament NLH Quiz</h1>
-    <p class="mode-subtitle">Choose what to practice</p>
-    <div class="mode-buttons">
-      <button class="mode-btn" onclick="startQuiz('preflop')">
-        <span class="mode-icon">P</span>
-        <span class="mode-title">Preflop</span>
-        <span class="mode-desc">Opening ranges, 3-bet spots, ICM shoves, squeeze plays & mixed strategies</span>
-      </button>
-      <button class="mode-btn" onclick="startQuiz('flop')">
-        <span class="mode-icon">F</span>
-        <span class="mode-title">Flop</span>
-        <span class="mode-desc">C-bets, check-raises, draws, board texture reads & multi-street planning</span>
-      </button>
+    <div class="question">
+      CO (40bb) opens, you 3bet from the SB (40bb) with QJo.<br><br>
+      Flop: Q&hearts; T&spades; 8&hearts;<br><br>
+      <strong>What is the optimal action?</strong>
+    </div>
+
+    <div class="choices">
+      <button class="choice-btn">Bet 25%</button>
+      <button class="choice-btn">Check</button>
+      <button class="choice-btn">All-in</button>
     </div>
   </div>
-
-  <!-- Quiz screen -->
-  <div id="quizScreen" class="quiz-screen hidden">
-    <div class="top-bar">
-      <button class="back-btn" onclick="goBack()">&larr; Back</button>
-      <h1 id="quizTitle">Preflop Quiz</h1>
-    </div>
-
-    <div class="quiz-container">
-      <div class="score" id="score">Score: 0 / 0</div>
-
-      <div id="boardSection" class="board-section hidden">
-        <div class="scenario-label">Board</div>
-        <div class="cards board-cards" id="board"></div>
-      </div>
-
-      <div class="scenario-label" style="text-align:center; margin-bottom:4px;">Your Hand</div>
-      <div class="cards" id="cards"></div>
-
-      <div class="info-row">
-        <div class="info-box">
-          <div class="scenario-label">Your Position</div>
-          <div class="scenario-value" id="position">--</div>
-        </div>
-        <div class="info-box">
-          <div class="scenario-label">Stack</div>
-          <div class="scenario-value" id="stack">--</div>
-        </div>
-        <div class="info-box" id="potBox" class="hidden">
-          <div class="scenario-label">Pot</div>
-          <div class="scenario-value" id="pot">--</div>
-        </div>
-      </div>
-
-      <div class="scenario">
-        <div class="scenario-label" id="actionLabel">Action To You</div>
-        <div class="scenario-value" id="action">--</div>
-      </div>
-
-      <div class="question" id="question">What should you do?</div>
-
-      <div class="choices" id="choices"></div>
-
-      <div class="explanation" id="explanation"></div>
-
-      <button class="next-btn" id="nextBtn" onclick="loadQuestion()">Next Hand</button>
-    </div>
-  </div>
-
-  <script defer type="text/javascript" src="/main.js"></script>
 </body>
 </html>
