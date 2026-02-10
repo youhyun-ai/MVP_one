@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>우리 오늘 보냐?</title>
+  <title>오늘 한 잔?</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
   <style>
@@ -14,7 +14,7 @@
     }
     body {
       font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: linear-gradient(160deg, #fdf6f0 0%, #fce4d6 40%, #f9d2b4 100%);
+      background: linear-gradient(160deg, #f0f4fd 0%, #d6e4fc 40%, #b4c8f9 100%);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
@@ -50,8 +50,8 @@
     h1 {
       font-size: 2.2rem;
       font-weight: 900;
-      color: #c0392b;
-      text-shadow: 0 2px 8px rgba(192, 57, 43, 0.15);
+      color: #2c3e50;
+      text-shadow: 0 2px 8px rgba(44, 62, 80, 0.15);
       line-height: 1.4;
     }
     .photo-wrap {
@@ -77,6 +77,13 @@
       max-height: 45vh;
       object-fit: cover;
     }
+    .emoji-grid {
+      font-size: 2.5rem;
+      line-height: 1.5;
+      padding: 20px 28px;
+      background: rgba(255, 255, 255, 0.6);
+      letter-spacing: 0.1em;
+    }
     .buttons {
       display: flex;
       gap: 24px;
@@ -94,14 +101,14 @@
       letter-spacing: 0.02em;
     }
     .btn-yes {
-      background: linear-gradient(135deg, #e74c3c, #c0392b);
+      background: linear-gradient(135deg, #f39c12, #e67e22);
       color: #fff;
-      box-shadow: 0 6px 20px rgba(231, 76, 60, 0.35);
+      box-shadow: 0 6px 20px rgba(243, 156, 18, 0.35);
       animation: pulse 2s ease-in-out infinite;
     }
     .btn-yes:hover {
       transform: translateY(-3px) scale(1.03);
-      box-shadow: 0 8px 28px rgba(231, 76, 60, 0.45);
+      box-shadow: 0 8px 28px rgba(243, 156, 18, 0.45);
     }
     .btn-yes:active {
       transform: translateY(0) scale(0.98);
@@ -132,11 +139,11 @@
     .celebration .title {
       font-size: 2.6rem;
       font-weight: 900;
-      color: #c0392b;
+      color: #2c3e50;
     }
     .celebration .sub {
       font-size: 1.3rem;
-      color: #e67e22;
+      color: #3498db;
       font-weight: 400;
     }
     .confetti {
@@ -160,13 +167,17 @@
 </head>
 <body>
   <div class="container" id="main">
-    <h1>우리 오늘 보냐?</h1>
-    <div class="photo-wrap">
-      <img class="photo" src="pic.jpeg" alt="방어회" />
+    <h1>오늘 한 잔?</h1>
+    <div class="photo-wrap emoji-grid">
+      🍺🍻🍷🍸🍹🍶<br>
+      🍕🍔🍗🍖🥩🍣<br>
+      🥂🍾🧊🍢🥟🫕<br>
+      🍿🧀🥓🍤🍱🍜<br>
+      🍺🥃🍸🫗🍡🥘
     </div>
     <div class="buttons">
-      <button class="btn btn-yes" id="yesBtn">네! 🐟</button>
-      <button class="btn btn-no" id="noBtn">아니요</button>
+      <button class="btn btn-yes" id="yesBtn">콜 🍻</button>
+      <button class="btn btn-no" id="noBtn">싫어</button>
     </div>
   </div>
 
@@ -180,24 +191,25 @@
       // Confetti
       const confettiContainer = document.createElement('div');
       confettiContainer.className = 'confetti';
-      const colors = ['#e74c3c', '#e67e22', '#f1c40f', '#2ecc71', '#3498db', '#9b59b6', '#ff6b81'];
-      for (let i = 0; i < 60; i++) {
+      const emojis = ['🍺', '🍻', '🍷', '🍸', '🍹', '🥂', '🍾', '🥃', '🍕', '🍗', '🍖', '🥩', '🍣', '🍤', '🧀'];
+      for (let i = 0; i < 50; i++) {
         const piece = document.createElement('div');
         piece.className = 'confetti-piece';
+        piece.textContent = emojis[Math.floor(Math.random() * emojis.length)];
         piece.style.left = Math.random() * 100 + '%';
-        piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.fontSize = (1.2 + Math.random() * 1.5) + 'rem';
         piece.style.animationDuration = (2 + Math.random() * 3) + 's';
         piece.style.animationDelay = Math.random() * 2 + 's';
-        piece.style.width = (6 + Math.random() * 8) + 'px';
-        piece.style.height = (6 + Math.random() * 8) + 'px';
-        piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+        piece.style.width = 'auto';
+        piece.style.height = 'auto';
+        piece.style.background = 'none';
         confettiContainer.appendChild(piece);
       }
       document.body.appendChild(confettiContainer);
       // Message
       const div = document.createElement('div');
       div.className = 'celebration';
-      div.innerHTML = '<div class="emoji">🎉🐟🎉</div><div class="title">좋아요!</div><div class="sub">방어회 먹으러 갑시다~ 🍣</div>';
+      div.innerHTML = '<div class="emoji">🍻🥂🍺</div><div class="title">좋았어!</div><div class="sub">오늘 달린다~ 🍷🍸🥃</div>';
       document.body.appendChild(div);
     });
 
