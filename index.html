@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="ko">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tournament NLH Quiz</title>
+  <title>방어회 먹으러 가실래요?</title>
   <style>
     * {
       box-sizing: border-box;
@@ -12,170 +12,118 @@
     }
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #1a1a2e;
-      color: #eee;
+      background: linear-gradient(135deg, #fff5e6, #ffe0cc);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       padding: 20px;
+      overflow: hidden;
     }
-    .quiz-container {
-      max-width: 500px;
-      width: 100%;
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
       text-align: center;
     }
-    .flop {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      margin-bottom: 30px;
+    h1 {
+      font-size: 2rem;
+      color: #d35400;
     }
-    .card {
-      width: 70px;
-      height: 100px;
-      background: #fff;
-      border-radius: 8px;
+    .photo {
+      max-width: 90%;
+      max-height: 50vh;
+      border-radius: 16px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+      object-fit: cover;
+    }
+    .buttons {
+      display: flex;
+      gap: 20px;
+      margin-top: 8px;
+    }
+    .btn {
+      padding: 14px 36px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    .btn-yes {
+      background: #27ae60;
+      color: #fff;
+    }
+    .btn-no {
+      background: #e74c3c;
+      color: #fff;
+      position: fixed;
+      z-index: 100;
+    }
+    .celebration {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      font-size: 28px;
-      font-weight: bold;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      min-height: 100vh;
+      font-size: 3rem;
+      color: #d35400;
+      gap: 16px;
     }
-    .card .rank {
-      font-size: 32px;
-    }
-    .card .suit {
-      font-size: 28px;
-    }
-    .heart { color: #e74c3c; }
-    .spade { color: #2c3e50; }
-    .question {
-      font-size: 18px;
-      line-height: 1.6;
-      margin-bottom: 30px;
-      padding: 20px;
-      background: rgba(255,255,255,0.05);
-      border-radius: 12px;
-    }
-    .choices {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .choice-btn {
-      padding: 16px 24px;
-      font-size: 18px;
-      font-weight: 600;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      background: #3498db;
-      color: #fff;
-      transition: background 0.2s, transform 0.1s;
-    }
-    .choice-btn:hover {
-      background: #2980b9;
-      transform: translateY(-2px);
-    }
-    .choice-btn:active {
-      transform: translateY(0);
-    }
-    .choice-btn.answered {
-      cursor: default;
-      position: relative;
-      overflow: hidden;
-    }
-    .choice-btn.answered:hover {
-      transform: none;
-    }
-    .choice-btn .percent-bar {
-      position: absolute;
-      left: 0;
-      top: 0;
-      height: 100%;
-      background: rgba(255,255,255,0.2);
-      transition: width 0.3s ease;
-      z-index: 0;
-    }
-    .choice-btn .label {
-      position: relative;
-      z-index: 1;
-    }
-    .choice-btn .percent {
-      position: relative;
-      z-index: 1;
-      margin-left: 10px;
-      opacity: 0.9;
+    .celebration .sub {
+      font-size: 1.3rem;
+      color: #e67e22;
     }
   </style>
 </head>
 <body>
-  <div class="quiz-container">
-    <div class="flop">
-      <div class="card">
-        <span class="rank heart">Q</span>
-        <span class="suit heart">&hearts;</span>
-      </div>
-      <div class="card">
-        <span class="rank spade">T</span>
-        <span class="suit spade">&spades;</span>
-      </div>
-      <div class="card">
-        <span class="rank heart">8</span>
-        <span class="suit heart">&hearts;</span>
-      </div>
-    </div>
-
-    <div class="question">
-      CO (40bb) opens, you 3bet from the SB (40bb) with QJo.<br><br>
-      Flop: Q&hearts; T&spades; 8&hearts;<br><br>
-      <strong>What is the optimal action?</strong>
-    </div>
-
-    <div class="choices" id="choices">
-      <button class="choice-btn" data-choice="bet25">Bet 25%</button>
-      <button class="choice-btn" data-choice="check">Check</button>
-      <button class="choice-btn" data-choice="allin">All-in</button>
+  <div class="container" id="main">
+    <h1>방어회 먹으러 가실래요?</h1>
+    <img class="photo" src="pic.jpeg" alt="방어회" />
+    <div class="buttons">
+      <button class="btn btn-yes" id="yesBtn">네</button>
+      <button class="btn btn-no" id="noBtn">아니요</button>
     </div>
   </div>
 
   <script>
-    const votes = { bet25: 0, check: 0, allin: 0 };
-    let hasVoted = false;
+    const yesBtn = document.getElementById('yesBtn');
+    const noBtn = document.getElementById('noBtn');
+    const main = document.getElementById('main');
 
-    function updateDisplay() {
-      const total = votes.bet25 + votes.check + votes.allin;
-      document.querySelectorAll('.choice-btn').forEach(btn => {
-        const choice = btn.dataset.choice;
-        const count = votes[choice];
-        const percent = total > 0 ? Math.round((count / total) * 100) : 0;
-
-        btn.classList.add('answered');
-        btn.innerHTML = `
-          <span class="percent-bar" style="width: ${percent}%"></span>
-          <span class="label">${getLabel(choice)}</span>
-          <span class="percent">${percent}%</span>
-        `;
-      });
-    }
-
-    function getLabel(choice) {
-      return { bet25: 'Bet 25%', check: 'Check', allin: 'All-in' }[choice];
-    }
-
-    document.getElementById('choices').addEventListener('click', (e) => {
-      const btn = e.target.closest('.choice-btn');
-      if (!btn || hasVoted) return;
-
-      hasVoted = true;
-      const choice = btn.dataset.choice;
-      votes[choice]++;
-      updateDisplay();
+    // "Yes" button — show celebration
+    yesBtn.addEventListener('click', function () {
+      document.body.innerHTML = '';
+      const div = document.createElement('div');
+      div.className = 'celebration';
+      div.innerHTML = '<div>좋아요! 🎉</div><div class="sub">방어회 먹으러 갑시다!</div>';
+      document.body.appendChild(div);
     });
+
+    // "No" button — evasion logic
+    const MARGIN = 20;
+
+    function moveAway(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      const btnW = noBtn.offsetWidth;
+      const btnH = noBtn.offsetHeight;
+      const maxX = window.innerWidth - btnW - MARGIN;
+      const maxY = window.innerHeight - btnH - MARGIN;
+      noBtn.style.left = Math.random() * Math.max(maxX, 0) + MARGIN + 'px';
+      noBtn.style.top = Math.random() * Math.max(maxY, 0) + MARGIN + 'px';
+    }
+
+    noBtn.addEventListener('mouseenter', moveAway);
+    noBtn.addEventListener('touchstart', moveAway, { passive: false });
+    noBtn.addEventListener('click', moveAway);
   </script>
 </body>
 </html>
