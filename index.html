@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>방어회 먹으러 가실래요?</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
   <style>
     * {
       box-sizing: border-box;
@@ -11,84 +13,160 @@
       padding: 0;
     }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(135deg, #fff5e6, #ffe0cc);
+      font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(160deg, #fdf6f0 0%, #fce4d6 40%, #f9d2b4 100%);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      padding: 24px;
       overflow: hidden;
     }
     .container {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 24px;
+      gap: 28px;
       text-align: center;
+      animation: fadeInUp 0.8s ease-out;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.04); }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+    @keyframes confettiFall {
+      0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
     }
     h1 {
-      font-size: 2rem;
-      color: #d35400;
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: #c0392b;
+      text-shadow: 0 2px 8px rgba(192, 57, 43, 0.15);
+      line-height: 1.4;
+    }
+    .photo-wrap {
+      position: relative;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.12),
+        0 4px 16px rgba(0, 0, 0, 0.08);
+      animation: float 3s ease-in-out infinite;
+    }
+    .photo-wrap::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 20px;
+      border: 3px solid rgba(255, 255, 255, 0.5);
+      pointer-events: none;
     }
     .photo {
-      max-width: 90%;
-      max-height: 50vh;
-      border-radius: 16px;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+      display: block;
+      max-width: 90vw;
+      max-height: 45vh;
       object-fit: cover;
     }
     .buttons {
       display: flex;
-      gap: 20px;
-      margin-top: 8px;
+      gap: 24px;
+      margin-top: 4px;
     }
     .btn {
-      padding: 14px 36px;
-      font-size: 1.1rem;
-      font-weight: 600;
+      padding: 16px 44px;
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
       border: none;
-      border-radius: 10px;
+      border-radius: 14px;
       cursor: pointer;
-      transition: transform 0.15s, box-shadow 0.15s;
-    }
-    .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transition: transform 0.2s, box-shadow 0.2s;
+      letter-spacing: 0.02em;
     }
     .btn-yes {
-      background: #27ae60;
+      background: linear-gradient(135deg, #e74c3c, #c0392b);
       color: #fff;
+      box-shadow: 0 6px 20px rgba(231, 76, 60, 0.35);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    .btn-yes:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 8px 28px rgba(231, 76, 60, 0.45);
+    }
+    .btn-yes:active {
+      transform: translateY(0) scale(0.98);
     }
     .btn-no {
-      background: #e74c3c;
+      background: linear-gradient(135deg, #bdc3c7, #95a5a6);
       color: #fff;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
       position: fixed;
       z-index: 100;
     }
+
+    /* Celebration */
     .celebration {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       min-height: 100vh;
-      font-size: 3rem;
-      color: #d35400;
-      gap: 16px;
+      gap: 20px;
+      animation: fadeInUp 0.6s ease-out;
+      position: relative;
+      z-index: 1;
+    }
+    .celebration .emoji {
+      font-size: 5rem;
+      animation: pulse 1s ease-in-out infinite;
+    }
+    .celebration .title {
+      font-size: 2.6rem;
+      font-weight: 900;
+      color: #c0392b;
     }
     .celebration .sub {
       font-size: 1.3rem;
       color: #e67e22;
+      font-weight: 400;
+    }
+    .confetti {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .confetti-piece {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      animation: confettiFall linear forwards;
     }
   </style>
 </head>
 <body>
   <div class="container" id="main">
     <h1>방어회 먹으러 가실래요?</h1>
-    <img class="photo" src="pic.jpeg" alt="방어회" />
+    <div class="photo-wrap">
+      <img class="photo" src="pic.jpeg" alt="방어회" />
+    </div>
     <div class="buttons">
-      <button class="btn btn-yes" id="yesBtn">네</button>
+      <button class="btn btn-yes" id="yesBtn">네! 🐟</button>
       <button class="btn btn-no" id="noBtn">아니요</button>
     </div>
   </div>
@@ -96,14 +174,31 @@
   <script>
     const yesBtn = document.getElementById('yesBtn');
     const noBtn = document.getElementById('noBtn');
-    const main = document.getElementById('main');
 
-    // "Yes" button — show celebration
+    // "Yes" button — show celebration with confetti
     yesBtn.addEventListener('click', function () {
       document.body.innerHTML = '';
+      // Confetti
+      const confettiContainer = document.createElement('div');
+      confettiContainer.className = 'confetti';
+      const colors = ['#e74c3c', '#e67e22', '#f1c40f', '#2ecc71', '#3498db', '#9b59b6', '#ff6b81'];
+      for (let i = 0; i < 60; i++) {
+        const piece = document.createElement('div');
+        piece.className = 'confetti-piece';
+        piece.style.left = Math.random() * 100 + '%';
+        piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.animationDuration = (2 + Math.random() * 3) + 's';
+        piece.style.animationDelay = Math.random() * 2 + 's';
+        piece.style.width = (6 + Math.random() * 8) + 'px';
+        piece.style.height = (6 + Math.random() * 8) + 'px';
+        piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+        confettiContainer.appendChild(piece);
+      }
+      document.body.appendChild(confettiContainer);
+      // Message
       const div = document.createElement('div');
       div.className = 'celebration';
-      div.innerHTML = '<div>좋아요! 🎉</div><div class="sub">방어회 먹으러 갑시다!</div>';
+      div.innerHTML = '<div class="emoji">🎉🐟🎉</div><div class="title">좋아요!</div><div class="sub">방어회 먹으러 갑시다~ 🍣</div>';
       document.body.appendChild(div);
     });
 
