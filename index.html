@@ -110,7 +110,6 @@
       background: linear-gradient(135deg, #bdc3c7, #95a5a6);
       color: #fff;
       box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
-      position: fixed;
       z-index: 100;
     }
 
@@ -208,6 +207,7 @@
     function moveAway(e) {
       e.preventDefault();
       e.stopPropagation();
+      noBtn.style.position = 'fixed';
       const btnW = noBtn.offsetWidth;
       const btnH = noBtn.offsetHeight;
       const maxX = window.innerWidth - btnW - MARGIN;
