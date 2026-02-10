@@ -1,0 +1,8 @@
+{
+  "rules": {
+    "pageViews": {
+      ".read": true,
+      ".write": true
+    }
+  }
+}
